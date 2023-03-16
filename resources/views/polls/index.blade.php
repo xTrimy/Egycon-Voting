@@ -80,6 +80,9 @@ Polls
                             <a href="{{ route('polls.votes',['poll'=>$poll]) }}"><button class="bg-purple-600 text-white py-1 px-4  mx-2 rounded-md">
                                 Votes
                             </button></a>
+                            <a href="{{ route('polls.generate_qr',['poll'=>$poll]) }}"><button class="bg-purple-600 text-white py-1 px-4  mx-2 rounded-md">
+                                QR Code
+                            </button></a>
                         </div>
                       </td>
                     </tr>

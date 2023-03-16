@@ -47,6 +47,7 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
         Route::delete('cosplayers/{cosplayer}', [CosplayerController::class, 'destroy'])->name('cosplayers.destroy');
         Route::resource('events', EventController::class);
         Route::resource('polls', PollController::class);
+        Route::get('polls/{poll}/get_qr', [PollController::class, 'generate_qr'])->name('polls.generate_qr');
         Route::resource('polls/{poll}/poll_data', PollDataController::class);
         Route::get('polls/{poll}/votes', [PollController::class, 'votes'])->name('polls.votes');
         Route::get('top', [CosplayerController::class, 'top_cosplayers']);

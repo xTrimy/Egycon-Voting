@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Poll;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Http\Request;
 
 class PollController extends Controller
@@ -147,5 +149,18 @@ class PollController extends Controller
         $poll = Poll::with('poll_lines')->findOrFail($id);
         $poll_votes = $poll->poll_votes;
         return view('polls.votes', compact('poll', 'poll_votes'));
+    }
+
+    public function generate_qr($id){
+        $qr_options = [
+            'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+            'eccLevel' => QRCode::ECC_L,
+            'scale' => 20,
+            'imageBase64' => false,
+            'imageTransparent' => false,
+        ];
+        $qr_options = new QROptions($qr_options);
+        $result = (new QRCode($qr_options))->render(route('voting_page.index', $id));
+        return response($result)->header('Content-Type', 'image/png');
     }
 }
