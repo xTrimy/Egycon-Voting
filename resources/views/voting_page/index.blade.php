@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="w-full h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,21 +19,25 @@
         body{
             background-image: url("{{ asset('images/bg.jpg') }}");
             background-size: cover;
+            background-attachment: fixed;
             background-repeat: no-repeat;
             background-position: center;
             font-family: 'BADABB', Arial, Helvetica, sans-serif;
         }
     </style>
 </head>
-<body>
+<body class="w-full h-full">
     @php
         $voting_max = 5;
     @endphp
     @if(Session::has('status'))
-        <div class="w-screen h-screen flex items-center justify-center">
+        <div class="w-full h-full flex items-center justify-center">
             <div class="flex items-center justify-center flex-col w-full px-2 mb-16">
                 <p class="text-white text-5xl text-center my-2">{{ Session::get('status') }}</p>
             </div>
+        </div>
+          <div class="flex justify-center w-48 h-48 mx-auto absolute bottom-0 left-1/2 transform -translate-x-1/2">
+                <img src="{{ asset('powered-by text.png') }}" class="w-full h-full object-contain"  alt="">
         </div>
     @else
         <form method="POST">
@@ -67,9 +71,15 @@
                     Submit your vote
                 </button>
             </div>
+            <div>
+            </div>
         </form>
+          <div class="flex justify-center w-48 h-48 mx-auto">
+                <img src="{{ asset('powered-by text.png') }}" class="w-full h-full object-contain"  alt="">
+        </div>
     @endif
-    <script>
+      
+<script>
         function check_all_rating_voted(){
             var all_voted = true;
             var set = [];
