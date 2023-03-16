@@ -6,7 +6,7 @@
           <div class="w-8 h-8 inline-block mr-4 group">
             @php
               $logo = 'logo.png';
-              $dashboard_name = 'Egycon Tickets';
+              $dashboard_name = 'Egycon Voting';
               if(isset($event_id)){
                 $event = App\Models\Event::find($event_id);
                 $dashboard_name = $event->name;
@@ -15,8 +15,7 @@
               }
               
             @endphp
-            <img src="{{ asset($logo) }}" class="w-full h-full object-contain group-hover:hidden" alt="">
-            <img src="{{ asset('logo2.png') }}" class="hidden w-full h-full object-contain group-hover:block" alt="">
+            <img src="{{ asset($logo) }}" class="w-full h-full object-contain" alt="">
           </div>
             {{ $dashboard_name }}
           </a>

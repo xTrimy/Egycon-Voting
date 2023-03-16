@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CosplayersExport;
 use App\Http\Controllers\API\CosplayerController as APICosplayerController;
 use App\Http\Controllers\API\EventController;
 use App\Models\Cosplayer;
@@ -11,6 +12,7 @@ use App\Models\PollData;
 use App\Models\PollDataLine;
 use App\Models\PollLine;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CosplayerController extends Controller
 {
@@ -269,5 +271,9 @@ class CosplayerController extends Controller
             }
         }
         return redirect()->route('polls.index');
+    }
+
+    public function export_cosplayers(){
+        return Excel::download(new CosplayersExport, 'cosplayers.xlsx');
     }
 }

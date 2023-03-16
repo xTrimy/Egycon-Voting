@@ -19,7 +19,9 @@ Poll Data - {{ $poll->name }}
                 Add Poll Data
             </button></a>
               </div>
-           
+            <a href="{{ route('poll_data.export',$poll) }}"><button class="bg-purple-600 text-white text-sm py-1 px-4 rounded-md">
+                Export All <i class="las la-file-excel text-sm text-white "></i>
+            </button></a>
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
               <div class="w-full overflow-x-auto">
                 <table class="w-full whitespace-no-wrap" id="images">

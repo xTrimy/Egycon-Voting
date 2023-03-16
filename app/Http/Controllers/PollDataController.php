@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PollsDataExport;
 use App\Models\Poll;
 use App\Models\PollData;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PollDataController extends Controller
 {
@@ -132,5 +134,17 @@ class PollDataController extends Controller
         $poll_data = PollData::find($id);
         $poll_data->delete();
         return redirect()->route('poll_data.index', $poll_data->poll_id)->with('success', 'Poll data deleted successfully.');
+    }
+
+    public function export($poll_id){
+        $poll = Poll::with('poll_lines')->find($poll_id);
+        if(!$poll){
+            return redirect()->route('poll_data.index', $poll_id)->with('error', 'Poll not found.');
+        }
+        if($poll->poll_data->count() == 0){
+            return redirect()->route('poll_data.index', $poll_id)->with('error', 'No data to export.');
+        }
+
+        return Excel::download(new PollsDataExport($poll_id), $poll->name.'-poll.xlsx');
     }
 }
