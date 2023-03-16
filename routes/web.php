@@ -77,12 +77,12 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
 
 });
 
-Route::get('/add-references', function () {
-    $cosplayers = \App\Models\Cosplayer::all();
-    foreach ($cosplayers as $cosplayer) {
-        $reference = new \App\Models\CosplayerReference();
-        $reference->cosplayer_id = $cosplayer->id;
-        $reference->image = "references/" . $cosplayer->number . ".jpg";
-        $reference->save();
-    }
-})->name('add_references');
+// Route::get('/add-references', function () {
+//     $cosplayers = \App\Models\Cosplayer::all();
+//     foreach ($cosplayers as $cosplayer) {
+//         $reference = new \App\Models\CosplayerReference();
+//         $reference->cosplayer_id = $cosplayer->id;
+//         $reference->image = "references/" . $cosplayer->number . ".jpg";
+//         $reference->save();
+//     }
+// })->name('add_references');
