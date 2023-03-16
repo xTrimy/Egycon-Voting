@@ -48,17 +48,17 @@ Cosplayer Details - {{ $cosplayer->name }}
                     </div>
                     @endforeach
                 @endif --}}
-                {{-- @php
-                    $images = $cosplayer->getMedia('references');
+                @php
+                    $images = $cosplayer->references;
                 @endphp
                 @if(count($images) > 0)
                     <h2 class="mt-4 font-bold text-xl">References</h2>
                     @foreach ($images as $image)
                     <div class="flex flex-col items-center justify-center mt-4 max-w-xl ">
-                        {{ $image }}
+                        <img src="{{ asset('images/'.$image->image) }}" alt="">
                     </div>
                     @endforeach
-                @endif --}}
+                @endif
               </div>
               
               <form action="" method="POST">
