@@ -6,10 +6,14 @@ module.exports = {
     "./resources/**/*.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "egycon-magenta": "#cb3398",
+    },
   }, 
   darkMode: 'class',
   plugins: [
     require('@tailwindcss/forms'),
   ],
+}
 }

@@ -30,7 +30,11 @@
     @php
         $voting_max = 5;
     @endphp
+  
     @if(Session::has('status'))
+      <div class="top-8 absolute left-1/2 transform -translate-x-1/2 w-64 h-32 mx-auto">
+        <img src="{{ asset('Egycon_Polls.png') }}" class="w-full h-full object-contain" alt="">
+    </div>
         <div class="w-full h-full flex items-center justify-center">
             <div class="flex items-center justify-center flex-col w-full px-2 mb-16">
                 <p class="text-white text-5xl text-center my-2">{{ Session::get('status') }}</p>
@@ -40,6 +44,9 @@
                 <img src="{{ asset('powered-by text.png') }}" class="w-full h-full object-contain"  alt="">
         </div>
     @else
+        <div class="my-8 w-64 h-32 mx-auto">
+            <img src="{{ asset('Egycon_Polls.png') }}" class="w-full h-full object-contain" alt="">
+        </div>
         <form method="POST">
             @csrf 
             @foreach ($poll_data as $poll_d)
@@ -58,7 +65,7 @@
                         @for($i = 0; $i<$voting_max; $i++)
                             <label class="w-16 h-16">
                                 <input type="radio" required class="peer hidden" name="vote_{{ $poll_d->id }}" id="vote_{{ $poll_d->id }}_{{ $i }}" value="{{ $i+1 }}">
-                                <div class="w-full h-full text-2xl flex items-center justify-center peer-checked:bg-green-500 text-black bg-purple-500">
+                                <div class="w-full h-full text-4xl rounded-md flex peer-checked:border-2 ring-0 ring-transparent peer-checked:ring-green-500 peer-checked:ring-2 transition-all border-0 border-transparent peer-checked:border-green-700 items-center justify-center peer-checked:bg-green-500 text-black bg-egycon-magenta">
                                     {{ $i+1 }}
                                 </div>
                             </label>
