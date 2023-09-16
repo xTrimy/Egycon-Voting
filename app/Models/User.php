@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'vote_weight'
     ];
 
     /**
@@ -45,5 +46,9 @@ class User extends Authenticatable
     public function cosplayer_votes()
     {
         return $this->hasMany(CosplayerVote::class);
+    }
+
+    public function events(){
+        return $this->belongsToMany(Event::class);
     }
 }

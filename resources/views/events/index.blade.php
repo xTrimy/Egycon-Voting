@@ -29,6 +29,7 @@ Events
                     >
                       <th class="px-4 py-3">Event Name</th>
                       <th class="px-4 py-3">Actions</th>
+                      <th class="px-4 py-3">Cosplayers</th>
                     </tr>
                   </thead>
                   <tbody
@@ -66,6 +67,15 @@ Events
                             >
                                 <i class="las la-trash text-xl group-disabled:text-gray-500 text-red-500"></i>
                             </button>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                          <a href="{{ route('cosplayers.index_with_event', $event->id) }}" class="underline">
+                            <div>
+                              <p class="font-semibold">{{ $event->cosplayers->count() }}</p>
+                            </div>
+                          </a>
                         </div>
                       </td>
                     </tr>

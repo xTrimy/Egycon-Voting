@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cosplayer;
+use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
-class CosplayerVoteController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +16,9 @@ class CosplayerVoteController extends Controller
      */
     public function index()
     {
-        //
+        // view users 
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -22,13 +26,12 @@ class CosplayerVoteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($cosplayer)
+    public function create()
     {
-        $cosplayer = Cosplayer::with(['images','references'])->findOrFail($cosplayer);
-        $events = auth()->user()->events()->pluck('event_id')->toArray();
-        if (!in_array($cosplayer->event_id, $events))
-            return redirect()->route('cosplayers.index');
-        return view('cosplayers.vote', compact('cosplayer'));
+        // create user
+        $events = Event::all();
+        $roles = Role::all();
+        return view('users.create', compact('events', 'roles'));
     }
 
     /**
@@ -40,26 +43,23 @@ class CosplayerVoteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id' => 'required|exists:cosplayers,id',
-            'score' => 'required|integer|min:0|max:100',
-            'comments' => 'nullable|string|max:255',
+            'name' => 'required|string',
+            'password' => 'required|string|confirmed',
+            'events' => 'required|array',
+            'events.*' => 'required|exists:events,id',
+            'email' => 'required|email|unique:users,email',
+            'weight' => 'required|integer',
+            'role' => 'required|string',
         ]);
-        // check if user has access to cosplayer 
-        $cosplayer = Cosplayer::findOrFail($request->id);
-        $events = auth()->user()->events()->pluck('event_id')->toArray();
-        if(!in_array($cosplayer->event_id, $events))
-            return redirect()->route('cosplayers.index');
-        // check if user has already voted
-        if($cosplayer->votes()->where('user_id', auth()->id())->exists())
-            return redirect()->route('cosplayers.show', $cosplayer->id);
-        // create vote
-        $cosplayer->votes()->create([
-            'vote' => $request->score??1,
-            'user_id' => auth()->id(),
-            'comment' => $request->comments,
+        $user = User::create([
+            'name' => $request->name,
+            'password' => bcrypt($request->password),
+            'email' => $request->email,
+            'vote_weight' => (int)$request->weight,
         ]);
-
-        return redirect()->route('cosplayers.index');
+        $user->assignRole($request->role);
+        $user->events()->attach($request->events);
+        return redirect()->route('users.index');
     }
 
     /**

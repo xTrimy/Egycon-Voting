@@ -8,7 +8,13 @@ Cosplayers
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
-            <form action="{{ route('cosplayers.search_by_number') }}">
+            <form 
+            @isset($event_id)
+              action="{{ route('cosplayers.search_by_number_with_event', $event_id) }}"
+            @else
+            action="{{ route('cosplayers.search_by_number') }}"
+            @endisset
+            >
                   <div class="flex  my-4">
                     <button class=" w-14 rounded-l-md flex items-center justify-center dark:bg-slate-800 border-l border-t border-b border-gray-800"> <i class="las la-search text-xl text-purple-500 "></i> </button>
                     <input name="q" placeholder="Search phone, email, number" type="text" class="w-full py-2 px-4  flex-1  dark:bg-slate-800 rounded-r-md dark:text-white border-t border-r border-b border-l-0 border-gray-800 ">
@@ -26,10 +32,11 @@ Cosplayers
                 Add new Cosplayer
             </button></a>
               </div>
-             
-            <a href="{{ route('cosplayers.export') }}"><button class="bg-purple-600 text-white text-sm py-1 px-4 rounded-md">
-                Export All <i class="las la-file-excel text-sm text-white "></i>
-            </button></a>
+            @isset($event_id)
+              <a href="{{ route('cosplayers.export_with_event',$event_id) }}"><button class="bg-purple-600 text-white text-sm py-1 px-4 rounded-md">
+                  Export All <i class="las la-file-excel text-sm text-white "></i>
+              </button></a>
+            @endif
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
               <div class="w-full overflow-x-auto">
                 <table class="w-full whitespace-no-wrap" id="images">
@@ -43,6 +50,7 @@ Cosplayers
                       <th class="px-4 py-3">From</th>
                       <th class="px-4 py-3">Event</th>
                       <th class="px-4 py-3">Actions</th>
+                      <th>Score</th>
                     </tr>
                   </thead>
                   <tbody
@@ -113,6 +121,9 @@ Cosplayers
                             @endif
                         </div>
                         
+                      </td>
+                      <td>
+                        {{ $cosplayer->calculateJudgeScore(); }}
                       </td>
                     </tr>
                     @endforeach

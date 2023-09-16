@@ -19,5 +19,13 @@ class Event extends Model
         return $this->hasMany(Cosplayer::class);
     }
 
+    public function users(){
+        return $this->belongsToMany(User::class);
+    }
+
+    public function user_has_access($user_id){
+        return $this->users()->where('user_id', $user_id)->exists();
+    }
+
     
 }

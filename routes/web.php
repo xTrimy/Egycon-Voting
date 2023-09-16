@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PollDataController;
 use App\Http\Controllers\PollVoteController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,7 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
     // Route::resource('cosplayers', CosplayerController::class);
     // split cosplayers resource into separate routes to allow for nested resources
     Route::get('cosplayers', [CosplayerController::class, 'index'])->name('cosplayers.index');
+    Route::get('{event_id}/cosplayers', [CosplayerController::class, 'index_with_event_id'])->name('cosplayers.index_with_event');
     Route::middleware('check_permissions:admin')->group(function () {
         Route::get('cosplayers/create', [CosplayerController::class, 'create'])->name('cosplayers.create');
         Route::post('cosplayers', [CosplayerController::class, 'store'])->name('cosplayers.store');
@@ -52,13 +54,19 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
         Route::get('polls/{poll}/export', [PollDataController::class, 'export'])->name('poll_data.export');
         Route::get('polls/{poll}/votes', [PollController::class, 'votes'])->name('polls.votes');
         Route::get('top', [CosplayerController::class, 'top_cosplayers']);
-        Route::get('generate_cosplayers_poll', [CosplayerController::class, 'create_poll_from_top_cosplayers']);
+        Route::get('generate_cosplayers_poll/{event_id}', [CosplayerController::class, 'create_poll_from_top_cosplayers']);
         Route::get('cosplay/export', [CosplayerController::class, 'export_cosplayers'])->name('cosplayers.export');
+        Route::get('{event_id}/cosplay/export', [CosplayerController::class, 'export_cosplayers_with_event'])->name('cosplayers.export_with_event');
 
+        // user management
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('users/create', [UserController::class, 'store'])->name('users.store');
     });
     
     // images and references are nested resources of cosplayers
     Route::get('cosplayer/search_num', [CosplayerController::class, 'search_cosplayer_by_number'])->name('cosplayers.search_by_number');
+    Route::get('{event_id}/cosplayer/search_num', [CosplayerController::class, 'search_cosplayer_by_number_with_event_id'])->name('cosplayers.search_by_number_with_event');
     Route::prefix('cosplayers')->group(function () {
         Route::prefix('/c/{cosplayer}')->group(function () {
             Route::prefix('images')->middleware('check_permissions:admin')->group(function () {

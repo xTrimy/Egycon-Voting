@@ -16,7 +16,9 @@ class CosplayerController extends Controller
      */
     public function index()
     {
-        return CosplayerResource::collection(Cosplayer::all());
+        // get cosplayers in events that user has access to
+        $cosplayers = auth()->user()->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten();
+        return CosplayerResource::collection($cosplayers);
     }
 
     /**

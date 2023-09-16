@@ -40,7 +40,7 @@ class Cosplayer extends Model
 
     private function getMaxJudgeWeight()
     {
-        return 80;
+        return 100;
     }
 
     public function calculateJudgeScore()
@@ -55,7 +55,7 @@ class Cosplayer extends Model
             $score += $vote->vote * $vote_weight;
         }
         // normalize score to 100 percent
-        $score = $score / $this->getMaxJudgeWeight() / 10 * 100;
+        $score = $score / $this->getMaxJudgeWeight();
         $score = round($score, 2);
         return $score;
     }
