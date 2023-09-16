@@ -205,7 +205,7 @@ class CosplayerController extends Controller
     private function getTopCosplayersByJudgeScore(){
         $cosplayers = Cosplayer::all();
         $top_cosplayers = [];
-        $max_cosplayers = 1;
+        $max_cosplayers = 20;
         foreach($cosplayers as $cosplayer){
             $cosplayer->score = $cosplayer->calculateJudgeScore();
             if($cosplayer->score > 0){
