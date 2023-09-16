@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.0.0" />
     {{-- @vite('resources/css/app.css') --}}
     <script
-      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      src="{{ asset("js/alpine.min.js") }}"
       defer
     ></script>
   

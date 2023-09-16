@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\API\EventController as APIEventController;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -38,7 +39,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
         // store event
-        $event = (new APIEventController)->store($request);
+        $event = (new APIEventController)->store($request);        
         return redirect()->route('events.index');
     }
 

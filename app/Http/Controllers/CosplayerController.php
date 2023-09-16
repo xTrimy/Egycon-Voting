@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CosplayersExport;
+use App\Exports\CosplayersWithEvent;
 use App\Http\Controllers\API\CosplayerController as APICosplayerController;
 use App\Http\Controllers\API\EventController;
 use App\Models\Cosplayer;
 use App\Models\CosplayerVote;
+use App\Models\Event;
 use App\Models\Poll;
 use App\Models\PollData;
 use App\Models\PollDataLine;
@@ -28,6 +30,16 @@ class CosplayerController extends Controller
         $judge_votes = CosplayerVote::where('user_id', auth()->user()->id)->pluck('cosplayer_id')->toArray();
 
         return view('cosplayers.index', compact('cosplayers', 'judge_votes'));
+    }
+
+    public function index_with_event_id($event_id)
+    {
+        // get all cosplayers for event
+        $event = Event::findOrFail($event_id);
+        $cosplayers = Cosplayer::where('event_id', $event_id)->get();
+        $judge_votes = CosplayerVote::where('user_id', auth()->user()->id)->pluck('cosplayer_id')->toArray();
+
+        return view('cosplayers.index', compact('cosplayers','judge_votes', 'event_id'));
     }
 
     /**
@@ -196,16 +208,25 @@ class CosplayerController extends Controller
     public function search_cosplayer_by_number(Request $request)
     {
         $q = $request->get('q');
-        $cosplayers = Cosplayer::where('number', $q)->get();
+        $cosplayers = auth()->user()->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten()->where('number', $q);
         $judge_votes = CosplayerVote::where('user_id', auth()->user()->id)->pluck('cosplayer_id')->toArray();
         return view('cosplayers.index', compact('cosplayers', 'judge_votes'));
     }
 
+    public function search_cosplayer_by_number_with_event_id(Request $request, $event_id)
+    {
+        $q = $request->get('q');
+        $cosplayers = Cosplayer::where('event_id', $event_id)->where('number', $q)->get();
+        $judge_votes = CosplayerVote::where('user_id', auth()->user()->id)->pluck('cosplayer_id')->toArray();
+        return view('cosplayers.index', compact('cosplayers', 'judge_votes', 'event_id'));
+    }
 
-    private function getTopCosplayersByJudgeScore(){
-        $cosplayers = Cosplayer::all();
+
+
+    private function getTopCosplayersByJudgeScore($event_id){
+        $cosplayers = Cosplayer::where('event_id', $event_id)->get();
         $top_cosplayers = [];
-        $max_cosplayers = 1;
+        $max_cosplayers = 10;
         foreach($cosplayers as $cosplayer){
             $cosplayer->score = $cosplayer->calculateJudgeScore();
             if($cosplayer->score > 0){
@@ -219,15 +240,15 @@ class CosplayerController extends Controller
         return $top_cosplayers;
     }
 
-    public function top_cosplayers(){
-        $top_cosplayers = $this->getTopCosplayersByJudgeScore();
+    public function top_cosplayers($event_id){
+        $top_cosplayers = $this->getTopCosplayersByJudgeScore($event_id);
         return $top_cosplayers;
     }
 
-    public function create_poll_from_top_cosplayers(){
-        $top_cosplayers = $this->getTopCosplayersByJudgeScore();
+    public function create_poll_from_top_cosplayers($event_id){
+        $top_cosplayers = $this->getTopCosplayersByJudgeScore($event_id);
         $poll = new Poll();
-        $poll->name = 'Top 30 Cosplayers';
+        $poll->name = 'Top 10 Cosplayers';
         $poll->save();
         // create poll lines 
         $poll_lines_types = [
@@ -275,5 +296,11 @@ class CosplayerController extends Controller
 
     public function export_cosplayers(){
         return Excel::download(new CosplayersExport, 'cosplayers.xlsx');
+    }
+
+    public function export_cosplayers_with_event($evnet_id)
+    {
+        return Excel::download(new CosplayersWithEvent($evnet_id), 'cosplayers.xlsx');
+        
     }
 }

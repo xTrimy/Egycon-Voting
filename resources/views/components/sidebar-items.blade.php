@@ -171,7 +171,7 @@
                 </ul>
               </template>
             </li>
-            <li class="relative px-6 py-3">
+            {{-- <li class="relative px-6 py-3">
                 @if($page == 'users')
                 <span
                     class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
@@ -215,21 +215,38 @@
                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     <a class="w-full" 
-                    {{-- href="{{ route('admin.users.invite',$event_id) }}" --}}
                     >Invite User</a>
                   </li>
                   <li
                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     <a class="w-full" 
-                    {{-- href="{{ route('admin.users.view',$event_id) }}" --}}
                     >
                       View Users
                     </a>
                   </li>
                 </ul>
               </template>
+              
+            </li> --}}
+            @if(auth()->user()->hasRole('admin'))
+            <li class="relative px-6 py-3">
+              @if($page == 'users')
+              <span
+                class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                aria-hidden="true"
+              ></span>
+              @endif
+              <a
+                class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                href="{{ route('users.index') }}"
+              >
+                <i class="las la-users text-2xl"></i>
+                <span class="ml-4">Users</span>
+              </a>
             </li>
+            @endisset
+            @if(auth()->user()->hasRole('admin'))
             <li class="relative px-6 py-3">
               @if($page == 'polls')
               <span
@@ -245,7 +262,7 @@
                 <span class="ml-4">Polls</span>
               </a>
             </li>
-            
+            @endisset
           </ul>
           
           <div class="px-6 my-6">

@@ -17,7 +17,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        return EventResource::collection(Event::all());
+        $events = auth()->user()->events;
+        return EventResource::collection($events);
     }
 
     /**
@@ -36,6 +37,7 @@ class EventController extends Controller
         $slug = Str::slug($data['name'], '-');
         $data['slug'] = $slug;
         $event = Event::create($data);
+        Event::findOrFail($event->id)->users()->attach(auth()->user()->id);
         return new EventResource($event);
     }
 

@@ -66,12 +66,12 @@ Cosplayer Details - {{ $cosplayer->name }}
                 <input type="hidden" name="id" value="{{ $cosplayer->id }}">
                 <div class="flex flex-col mt-4 max-w-xl text-left ">
                     <label for="score" class="text-gray-700 text-left dark:text-gray-200">Score
-                        <span class="text-sm text-gray-500 dark:text-gray-400"> (0-100)</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400"> (0-10)</span>
                         <span class="text-sm text-red-500 dark:text-red-400">*</span>
                     </label>
                     <input type="number"
-                    oninput="if(value<0) value=0;if(value>100) value=100;"
-                    name="score" id="score" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue" min="0" max="100" step="1" value="{{ old('score') }}">
+                    oninput="if(value<0) value=0;if(value>10) value=10;"
+                    name="score" id="score" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue" min="0" max="10" step="1" value="{{ old('score') }}">
                     @error('score')
                         <div class="text-red-500 mt-2 text-sm">
                             {{ $message }}
