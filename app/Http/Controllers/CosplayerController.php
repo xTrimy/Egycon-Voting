@@ -101,7 +101,7 @@ class CosplayerController extends Controller
         $request->validate([
             'event_id' => 'required|exists:events,id',
             'images' => 'required|array',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ]);
         $files = $request->file('images');
         $event_id = $request->get('event_id');
