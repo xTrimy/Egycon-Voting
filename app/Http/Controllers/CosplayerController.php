@@ -107,7 +107,6 @@ class CosplayerController extends Controller
         $event_id = $request->get('event_id');
         foreach($files as $file){
             $cosplayer_number = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            dd($cosplayer_number);
             $cosplayer = Cosplayer::where('event_id', $event_id)->where('number', $cosplayer_number)->first();
             if($cosplayer){
                 $image = Image::read($file)
