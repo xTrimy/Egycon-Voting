@@ -107,10 +107,11 @@ class CosplayerController extends Controller
         $event_id = $request->get('event_id');
         foreach($files as $file){
             $cosplayer_number = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            dd($cosplayer_number);
             $cosplayer = Cosplayer::where('event_id', $event_id)->where('number', $cosplayer_number)->first();
             if($cosplayer){
                 $image = Image::read($file)
-                    ->resize(600, 600);
+                    ->scale(600, 600);
                 $path = "references/{$event_id}/{$cosplayer_number}.jpg";
                 Storage::disk('public')->put($path, $image->toJpeg(80));
                 $cosplayer->references()->create(['image' => $path]);
