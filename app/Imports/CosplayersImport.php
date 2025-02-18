@@ -24,9 +24,6 @@ class CosplayersImport implements ToModel, WithHeadingRow, WithSkipDuplicates
     */
     public function model(array $row)
     {
-        if(!isset($row['name']) || !isset($row['character']) || !isset($row['anime']) || !isset($row['number']) || !isset($row['stage_name'])) {
-            return null;
-        }
 
         return new Cosplayer([
             'name' => $row['name']??"N/A",
