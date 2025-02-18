@@ -29,11 +29,11 @@ class CosplayersImport implements ToModel, WithHeadingRow, WithSkipDuplicates
         }
 
         return new Cosplayer([
-            'name' => $row['name'],
-            'character' => $row['character'],
-            'anime' => $row['anime'],
-            'number' => $row['number'],
-            'stage_name' => $row['stage_name'],
+            'name' => $row['name']??"",
+            'character' => $row['character']??"",
+            'anime' => $row['anime']??"",
+            'number' => $row['number']??"",
+            'stage_name' => $row['stage_name']??"",
             'event_id' => $this->event_id,
         ]);
     }
