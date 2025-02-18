@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CosplayerResource;
 use App\Models\Cosplayer;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CosplayerController extends Controller
@@ -12,12 +13,13 @@ class CosplayerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         // get cosplayers in events that user has access to
-        $cosplayers = auth()->user()->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten();
+        /** @var User $user */
+        $user = auth()->user();
+        $cosplayers = $user->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten();
         return CosplayerResource::collection($cosplayers);
     }
 
@@ -25,9 +27,9 @@ class CosplayerController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\CosplayerResource
      */
-    public function store(Request $request)
+    public function store(Request $request): CosplayerResource
     {
         $request->validate([
             'name' => 'required|string',
@@ -35,8 +37,9 @@ class CosplayerController extends Controller
             'character' => 'required|string',
             'anime' => 'required|string',
             'number' => 'required|integer',
+            'stage_name' => 'nullable|string',
         ]);
-        $data = $request->only(['name', 'event_id', 'character', 'anime', 'number']);
+        $data = $request->only(['name', 'event_id', 'character', 'anime', 'number', 'stage_name']);
         $cosplayer = Cosplayer::create($data);
         return new CosplayerResource($cosplayer);
     }
@@ -45,9 +48,8 @@ class CosplayerController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): CosplayerResource
     {
         
         $cosplayer = new CosplayerResource(Cosplayer::find($id));
@@ -59,9 +61,8 @@ class CosplayerController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): CosplayerResource
     {
         $request->validate([
             'name' => 'nullable',
@@ -69,14 +70,15 @@ class CosplayerController extends Controller
             'character' => 'nullable',
             'anime' => 'nullable',
             'number' => 'nullable',
+            'stage_name' => 'nullable',
         ]);
-        foreach ($request->only(['name', 'event_id', 'character', 'anime', 'number']) as $key => $value) {
+        foreach ($request->only(['name', 'event_id', 'character', 'anime', 'number', 'stage_name']) as $key => $value) {
             if ($value == null) {
                 unset($request[$key]);
             }
         }
         $cosplayer = Cosplayer::find($id);
-        $cosplayer->update($request->only(['name', 'event_id', 'character', 'anime', 'number']));
+        $cosplayer->update($request->only(['name', 'event_id', 'character', 'anime', 'number', 'stage_name']));
         return new CosplayerResource($cosplayer);
     }
 
@@ -86,27 +88,28 @@ class CosplayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
         $cosplayer = Cosplayer::find($id);
         $cosplayer->delete();
         return response()->json(null, 204);
     }
 
-    public function search_cosplayer_by_number($number)
+    public function search_cosplayer_by_number($number): CosplayerResource
     {
         $cosplayers = Cosplayer::where('number', $number)->first();
         return new CosplayerResource($cosplayers);
         
     }
-    public function search_cosplayer_by_number_with_event_id($event_id, $number)
+    public function search_cosplayer_by_number_with_event_id($event_id, $number): CosplayerResource
     {
         $cosplayers = Cosplayer::where('number', $number)->where('event_id', $event_id)->first();
         return new CosplayerResource($cosplayers);
         
     }
 
-    public function get_all_by_event_id($event_id){
+    public function get_all_by_event_id($event_id): CosplayerResource
+    {
         $cosplayers = Cosplayer::where('event_id', $event_id)->get();
         return new CosplayerResource($cosplayers);
     }

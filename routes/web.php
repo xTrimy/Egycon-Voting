@@ -43,6 +43,10 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
     Route::middleware('check_permissions:admin')->group(function () {
         Route::get('cosplayers/create', [CosplayerController::class, 'create'])->name('cosplayers.create');
         Route::post('cosplayers', [CosplayerController::class, 'store'])->name('cosplayers.store');
+        Route::get('cosplayers/bulk-add', [CosplayerController::class, 'bulk_add'])->name('cosplayers.bulk-add');
+        Route::post('cosplayers/bulk-add', [CosplayerController::class, 'bulk_add_store'])->name('cosplayers.bulk-add');
+        Route::get('cosplayers/references/bulk-upload', [CosplayerController::class, 'bulk_upload_references'])->name('cosplayers.bulk-upload-references');
+        Route::post('cosplayers/references/bulk-upload', [CosplayerController::class, 'bulk_upload_references_store'])->name('cosplayers.bulk-upload-references');
         Route::get('cosplayers/{cosplayer}', [CosplayerController::class, 'show'])->name('cosplayers.show');
         Route::get('cosplayers/{cosplayer}/edit', [CosplayerController::class, 'edit'])->name('cosplayers.edit');
         Route::put('cosplayers/{cosplayer}', [CosplayerController::class, 'update'])->name('cosplayers.update');

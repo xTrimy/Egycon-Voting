@@ -67,7 +67,7 @@ if($first_event_id == 6){
                     <h2 class="mt-4 font-bold text-xl">References</h2>
                     @foreach ($images as $image)
                     <div class="flex flex-col items-center justify-center mt-4 max-w-xl ">
-                        <img src="{{ asset('images/'.$image->image) }}" alt="">
+                        <img src="{{ asset('storage/'.$image->image) }}">
                     </div>
                     @endforeach
                 @endif
@@ -83,7 +83,7 @@ if($first_event_id == 6){
                     </label>
                     <input type="number"
                     oninput="if(value<0) value=0;if(value>100) value=100;"
-                    name="score" id="score" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue" min="0" max="100" step="1" value="{{ old('score') }}">
+                    name="score" id="score" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue" min="0" max="100" step="1" value="{{ old('score')??@$vote->vote??"" }}">
                     @error('score')
                         <div class="text-red-500 mt-2 text-sm">
                             {{ $message }}
@@ -92,7 +92,7 @@ if($first_event_id == 6){
                 </div>
                 <div class="flex flex-col mt-4 max-w-xl text-left ">
                     <label for="comments" class="text-gray-700 text-left dark:text-gray-200">Comments</label>
-                    <textarea name="comments" id="comments" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue">{{ old('comments') }}</textarea>
+                    <textarea name="comments" id="comments" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:shadow-outline-blue">{{ old('comments')??@$vote->comments??"" }}</textarea>
                     @error('comments')
                         <div class="text-red-500 mt-2 text-sm">
                             {{ $message }}

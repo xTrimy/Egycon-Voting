@@ -6,6 +6,7 @@ use App\Exports\CosplayersExport;
 use App\Exports\CosplayersWithEvent;
 use App\Http\Controllers\API\CosplayerController as APICosplayerController;
 use App\Http\Controllers\API\EventController;
+use App\Imports\CosplayersImport;
 use App\Models\Cosplayer;
 use App\Models\CosplayerVote;
 use App\Models\Event;
@@ -14,7 +15,10 @@ use App\Models\PollData;
 use App\Models\PollDataLine;
 use App\Models\PollLine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class CosplayerController extends Controller
 {
@@ -63,6 +67,56 @@ class CosplayerController extends Controller
     {
         // store cosplayer
         $cosplayer = (new APICosplayerController)->store($request);
+        return redirect()->route('cosplayers.index');
+    }
+
+    public function bulk_add()
+    {
+        $events = (new EventController)->index();
+        return view('cosplayers.bulk-add', compact('events'));
+    }
+
+    public function bulk_add_store(Request $request)
+    {
+        $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'sheet' => 'nullable|file|mimes:csv,xlsx,xls',
+        ]);
+
+        $file = $request->file('sheet');
+        $event_id = $request->get('event_id');
+
+       (new CosplayersImport($event_id))->import($file);
+        return redirect()->route('cosplayers.index');
+    }
+
+    public function bulk_upload_references()
+    {
+        $events = (new EventController)->index();
+        return view('cosplayers.references.bulk-upload', compact('events'));
+    }
+
+    public function bulk_upload_references_store(Request $request)
+    {
+        $request->validate([
+            'event_id' => 'required|exists:events,id',
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        $files = $request->file('images');
+        $event_id = $request->get('event_id');
+        foreach($files as $file){
+            $cosplayer_number = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $cosplayer = Cosplayer::where('event_id', $event_id)->where('number', $cosplayer_number)->first();
+            if($cosplayer){
+                $image = Image::read($file)
+                    ->resize(600, 600);
+                $path = "references/{$event_id}/{$cosplayer_number}.jpg";
+                Storage::disk('public')->put($path, $image->toJpeg(80));
+                $cosplayer->references()->create(['image' => $path]);
+            }
+        }
+
         return redirect()->route('cosplayers.index');
     }
 
@@ -208,7 +262,9 @@ class CosplayerController extends Controller
     public function search_cosplayer_by_number(Request $request)
     {
         $q = $request->get('q');
-        $cosplayers = auth()->user()->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten()->where('number', $q);
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $cosplayers = $user->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten()->where('number', $q);
         $judge_votes = CosplayerVote::where('user_id', auth()->user()->id)->pluck('cosplayer_id')->toArray();
         return view('cosplayers.index', compact('cosplayers', 'judge_votes'));
     }

@@ -25,10 +25,11 @@ class CosplayerVoteController extends Controller
     public function create($cosplayer)
     {
         $cosplayer = Cosplayer::with(['images','references'])->findOrFail($cosplayer);
+        $vote = $cosplayer->vote(auth()->user());
         $events = auth()->user()->events()->pluck('event_id')->toArray();
         if (!in_array($cosplayer->event_id, $events))
             return redirect()->route('cosplayers.index');
-        return view('cosplayers.vote', compact('cosplayer'));
+        return view('cosplayers.vote', compact('cosplayer', 'vote'));
     }
 
     /**
@@ -49,9 +50,15 @@ class CosplayerVoteController extends Controller
         $events = auth()->user()->events()->pluck('event_id')->toArray();
         if(!in_array($cosplayer->event_id, $events))
             return redirect()->route('cosplayers.index');
-        // check if user has already voted
-        if($cosplayer->votes()->where('user_id', auth()->id())->exists())
-            return redirect()->route('cosplayers.show', $cosplayer->id);
+      
+        $vote = $cosplayer->vote(auth()->user());
+        if($vote){
+            $vote->update([
+                'vote' => $request->score??1,
+                'comment' => $request->comments,
+            ]);
+            return redirect()->route('cosplayers.index');
+        }
         // create vote
         $cosplayer->votes()->create([
             'vote' => $request->score??1,

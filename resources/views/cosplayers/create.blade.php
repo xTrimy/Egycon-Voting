@@ -71,6 +71,20 @@ Add Cosplayer
               </label>
               <label class="block text-sm">
                 <span class="text-gray-700 dark:text-gray-400">
+                <i class="las la-signature text-xl"></i>
+                Stage Name <span class="text-red-500">*</span>
+                </span>
+                <input
+                value="{{ old('stage_name')??$cosplayer->stage_name??"" }}"
+                type="text"
+                name="stage_name"
+                    required
+                  class="block w-full mt-1 text-sm border dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="John Doe"
+                />
+              </label>
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">
                 <i class="las la-theater-masks text-xl"></i>
                 Character <span class="text-red-500">*</span>
                 </span>

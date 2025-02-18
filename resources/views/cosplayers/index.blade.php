@@ -30,7 +30,7 @@ if($first_event_id == 6){
             >
                   <div class="flex  my-4">
                     <button class=" w-14 rounded-l-md flex items-center justify-center dark:bg-slate-800 border-l border-t border-b border-gray-800"> <i class="las la-search text-xl text-purple-500 "></i> </button>
-                    <input name="q" placeholder="Search phone, email, number" type="text" class="w-full py-2 px-4  flex-1  dark:bg-slate-800 rounded-r-md dark:text-white border-t border-r border-b border-l-0 border-gray-800 ">
+                    <input name="q" placeholder="Search cosplay no." type="text" class="w-full py-2 px-4  flex-1  dark:bg-slate-800 rounded-r-md dark:text-white border-t border-r border-b border-l-0 border-gray-800 ">
                   </div>
               </form>
               <div class="flex justify-between items-center">
@@ -60,7 +60,7 @@ if($first_event_id == 6){
                       <th class="px-4 py-3">#</th>
                       <th class="px-4 py-3">Stage Name</th>
                       <th class="px-4 py-3">{{ $character_s }} </th>
-                      <th class="px-4 py-3">From</th>
+                      {{-- <th class="px-4 py-3">From</th> --}}
                       <th class="px-4 py-3">Event</th>
                       <th class="px-4 py-3">Actions</th>
                       <th>Score</th>
@@ -85,9 +85,9 @@ if($first_event_id == 6){
                       <td class="px-4 py-3">
                         {{ $cosplayer->character }}
                       </td>
-                      <td class="px-4 py-3">
+                      {{-- <td class="px-4 py-3">
                         {{ $cosplayer->anime }}
-                      </td>
+                      </td> --}}
                       <td class="px-4 py-3">
                         {{ $cosplayer->event->name }}
                       </td>
@@ -124,9 +124,9 @@ if($first_event_id == 6){
                                 <i class="las la-trash text-xl group-disabled:text-gray-500 text-red-500"></i>
                             </button>
                             @if(in_array($cosplayer->id,$judge_votes))
-                            <button disabled class="bg-neutral-600 text-white py-1 px-4 rounded-md">
-                                Voted
-                            </button>
+                            <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
+                                Edit Vote
+                            </button></a>
                             @else
                             <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
                                 Vote

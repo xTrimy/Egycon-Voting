@@ -15,6 +15,7 @@ class Cosplayer extends Model
         'character',
         'anime',
         'number',
+        'stage_name',
         'event_id',
     ];
 
@@ -36,6 +37,10 @@ class Cosplayer extends Model
     public function votes()
     {
         return $this->hasMany(CosplayerVote::class);
+    }
+
+    public function vote(User $user){
+        return $this->votes()->where('user_id', $user->id)->first();
     }
 
     private function getMaxJudgeWeight()

@@ -77,7 +77,7 @@ Cosplayer Details - {{ $cosplayer->name }}
                     <h2 class="mt-4 font-bold text-xl">References</h2>
                     @foreach ($images as $image)
                     <div class="flex flex-col items-center justify-center mt-4 max-w-xl ">
-                        <img src="{{ asset('images/'.$image->image) }}" alt="">
+                        <img src="{{ asset('storage/'.$image->image) }}">
                     </div>
                     @endforeach
                 @endif
