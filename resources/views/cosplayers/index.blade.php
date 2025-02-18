@@ -5,6 +5,19 @@ cosplayers
 @section('title')
 Cosplayers
 @endsection
+@php
+$first_event_id = auth()->user()->events()->get()->pluck('id')->first();
+
+$cosplayer_s = "Cosplayer";
+$cosplayers_s = "Cosplayers";
+$character_s = "Character";
+
+if($first_event_id == 6){
+    $character_s = "Song";
+    $cosplayer_s = "Singer";
+    $cosplayers_s = "Singers";
+}
+@endphp
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
@@ -24,12 +37,12 @@ Cosplayers
               <h2
                 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
               >
-                Cosplayers
+                {{ $cosplayers_s }}
               </h2>
             @include('includes.alerts')
             
             <a href="{{ route('cosplayers.create') }}"><button class="bg-purple-600 text-white py-2 px-8 rounded-md">
-                Add new Cosplayer
+                Add new {{ $cosplayer_s }}
             </button></a>
               </div>
             @isset($event_id)
@@ -46,7 +59,7 @@ Cosplayers
                     >
                       <th class="px-4 py-3">#</th>
                       <th class="px-4 py-3">Stage Name</th>
-                      <th class="px-4 py-3">Character</th>
+                      <th class="px-4 py-3">{{ $character_s }} </th>
                       <th class="px-4 py-3">From</th>
                       <th class="px-4 py-3">Event</th>
                       <th class="px-4 py-3">Actions</th>

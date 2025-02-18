@@ -1,3 +1,13 @@
+@php
+$first_event_id = auth()->user()->events()->get()->pluck('id')->first();
+
+$cosplayer_s = "Cosplayer";
+$cosplayers_s = "Cosplayers";
+if($first_event_id == 6){
+    $cosplayer_s = "Singer";
+    $cosplayers_s = "Singers";
+}
+@endphp
 <div class="py-4 text-gray-500 dark:text-gray-400">
           <a
             class="ml-6 text-lg flex flex-wrap items-center font-bold text-gray-800 dark:text-gray-200"
@@ -65,7 +75,7 @@
               >
                 <span class="inline-flex items-center">
                   <i class="las la-theater-masks text-2xl"></i>
-                  <span class="ml-4">Cosplayers</span>
+                  <span class="ml-4">{{$cosplayers_s}}</span>
                 </span>
                 <svg
                   class="w-4 h-4"
@@ -97,7 +107,7 @@
                     <a class="w-full" 
                     href="{{ route('cosplayers.create') }}"
                     >
-                      Add Cosplayer</a>
+                      Add {{$cosplayer_s}}</a>
                   </li>
                   <li
                     class="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
@@ -105,7 +115,7 @@
                     <a class="w-full" 
                     href="{{ route('cosplayers.index') }}"
                     >
-                      View Cosplayers
+                      View {{$cosplayers_s}}
                     </a>
                   </li>
                 </ul>

@@ -22,4 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('cosplayers', CosplayerController::class);
 Route::get('cosplayer/search_num/{number}', [CosplayerController::class, 'search_cosplayer_by_number'])->name('cosplayers.search_by_number');
+Route::get('cosplayer/search_num/{event_id}/{number}', [CosplayerController::class, 'search_cosplayer_by_number_with_event_id']);
+Route::get('cosplayers/event/{event_id}', [CosplayerController::class, 'get_all_by_event_id']);
 Route::apiResource('events', EventController::class);
+

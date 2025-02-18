@@ -99,4 +99,15 @@ class CosplayerController extends Controller
         return new CosplayerResource($cosplayers);
         
     }
+    public function search_cosplayer_by_number_with_event_id($event_id, $number)
+    {
+        $cosplayers = Cosplayer::where('number', $number)->where('event_id', $event_id)->first();
+        return new CosplayerResource($cosplayers);
+        
+    }
+
+    public function get_all_by_event_id($event_id){
+        $cosplayers = Cosplayer::where('event_id', $event_id)->get();
+        return new CosplayerResource($cosplayers);
+    }
 }

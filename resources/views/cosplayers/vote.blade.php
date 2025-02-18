@@ -5,6 +5,18 @@ cosplayers
 @section('title')
 Cosplayer Details - {{ $cosplayer->name }}
 @endsection
+@php
+$first_event_id = auth()->user()->events()->get()->pluck('id')->first();
+
+$cosplayer_s = "Cosplayer";
+$cosplayers_s = "Cosplayers";
+$character_s = "Character";
+if($first_event_id == 6){
+    $character_s = "Song";
+    $cosplayer_s = "Singer";
+    $cosplayers_s = "Singers";
+}
+@endphp
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
@@ -13,7 +25,7 @@ Cosplayer Details - {{ $cosplayer->name }}
             <h2
               class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
             >
-              Cosplayer Details - {{ $cosplayer->name }}
+              {{$cosplayer_s}} Details - {{ $cosplayer->name }}
             </h2>
             </div>
            
@@ -21,15 +33,15 @@ Cosplayer Details - {{ $cosplayer->name }}
               <div class="w-full overflow-x-auto">
                 <table>
                     <tr>
-                        <th class="text-left pr-4">Cosplayer Name</th>
+                        <th class="text-left pr-4">{{$cosplayer_s}} Name</th>
                         <td>{{ $cosplayer->name }}</td>
                     </tr>
                     <tr>
-                        <th class="text-left pr-4">Character</th>
+                        <th class="text-left pr-4">{{$character_s}}</th>
                         <td>{{ $cosplayer->character }}</td>
                     </tr>
                     <tr>
-                        <th class="text-left pr-4">Anime/Movie/Game</th>
+                        <th class="text-left pr-4">From</th>
                         <td>{{ $cosplayer->anime }}</td>
                     </tr>
                     <tr>
