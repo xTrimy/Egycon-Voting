@@ -27,5 +27,9 @@ class Event extends Model
         return $this->users()->where('user_id', $user_id)->exists();
     }
 
+    public function votes(){
+        return $this->hasManyThrough(CosplayerVote::class, Cosplayer::class);
+    }
+
     
 }

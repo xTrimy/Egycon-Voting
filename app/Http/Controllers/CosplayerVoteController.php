@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cosplayer;
+use App\Models\Event;
+use App\Notifications\CosplayVoteReport;
 use Illuminate\Http\Request;
 
 class CosplayerVoteController extends Controller
@@ -112,5 +114,21 @@ class CosplayerVoteController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function sendTopCosplayersReportView(Event $event){
+        return view('cosplayers.send-report', compact('event'));
+    }
+
+    public function sendTopCosplayersReportPost(Event $event, Request $request)
+    {
+        $request->validate([
+            'top' => 'required|numeric|min:1|max:100',
+        ]);
+        $users = $event->users()->get();
+        foreach ($users as $user) {
+            $user->notify(new CosplayVoteReport($event, $request->top));
+        }
+        return redirect()->back()->with('success', 'Report sent to subscribed users');
     }
 }

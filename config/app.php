@@ -1,5 +1,7 @@
 <?php
 
+use App\NotificationChannels\TelegramChannel;
+
 return [
 
     /*
@@ -33,7 +35,7 @@ return [
     |
     */
     'enable_telegram_notifications' => (bool) env('ENABLE_TELEGRAM_NOTIFICATIONS', false),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -248,6 +250,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'telegram' => TelegramChannel::class,
 
     ],
 

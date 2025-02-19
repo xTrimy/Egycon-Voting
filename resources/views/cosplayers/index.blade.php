@@ -52,7 +52,7 @@ if($first_event_id == 6){
                     Export All <i class="las la-file-excel text-sm text-white "></i>
                   </button>
                 </a>
-                <a href="{{ route('cosplayers.export_with_event',$event_id) }}">
+                <a href="{{ route('vote_report',$event_id) }}">
                   <button class="bg-purple-600 text-white text-sm py-1 ml-2 px-4 rounded-md block">
                     Send Top Report <i class="las la-file-excel text-sm text-white "></i>
                   </button>

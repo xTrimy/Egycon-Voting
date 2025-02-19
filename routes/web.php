@@ -38,6 +38,8 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
 
     // Route::resource('cosplayers', CosplayerController::class);
     // split cosplayers resource into separate routes to allow for nested resources
+    Route::get('/{event}/vote_report', [CosplayerVoteController::class, 'sendTopCosplayersReportView'])->name('vote_report');
+    Route::post('/{event}/vote_report', [CosplayerVoteController::class, 'sendTopCosplayersReportPost'])->name('vote_report');
     Route::get('/settings', [UserController::class, 'viewSettings'])->name('settings');
     Route::get('/settings/disable_telegram', [UserController::class,'disableTelegramNotifications'])->name('settings.disableTelegram');
     Route::get('cosplayers', [CosplayerController::class, 'index'])->name('cosplayers.index');
