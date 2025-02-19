@@ -46,9 +46,18 @@ if($first_event_id == 6){
             </button></a>
               </div>
             @isset($event_id)
-              <a href="{{ route('cosplayers.export_with_event',$event_id) }}"><button class="bg-purple-600 text-white text-sm py-1 px-4 rounded-md">
-                  Export All <i class="las la-file-excel text-sm text-white "></i>
-              </button></a>
+              <div class="flex mb-4">
+                <a href="{{ route('cosplayers.export_with_event',$event_id) }}">
+                  <button class="bg-purple-600 text-white text-sm py-1 px-4 rounded-md block">
+                    Export All <i class="las la-file-excel text-sm text-white "></i>
+                  </button>
+                </a>
+                <a href="{{ route('cosplayers.export_with_event',$event_id) }}">
+                  <button class="bg-purple-600 text-white text-sm py-1 ml-2 px-4 rounded-md block">
+                    Send Top Report <i class="las la-file-excel text-sm text-white "></i>
+                  </button>
+                </a>
+              </div>
             @endif
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
               <div class="w-full overflow-x-auto">
@@ -136,7 +145,7 @@ if($first_event_id == 6){
                         
                       </td>
                       <td>
-                        {{ $cosplayer->calculateJudgeScore(); }}
+                        {{ $cosplayer->calculateJudgeScore() }}
                       </td>
                     </tr>
                     @endforeach

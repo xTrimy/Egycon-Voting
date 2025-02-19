@@ -38,6 +38,7 @@ Route::prefix('/admin')->middleware('auth')->group(function(){
 
     // Route::resource('cosplayers', CosplayerController::class);
     // split cosplayers resource into separate routes to allow for nested resources
+    Route::get('/settings', [UserController::class, 'viewSettings'])->name('settings');
     Route::get('cosplayers', [CosplayerController::class, 'index'])->name('cosplayers.index');
     Route::get('{event_id}/cosplayers', [CosplayerController::class, 'index_with_event_id'])->name('cosplayers.index_with_event');
     Route::middleware('check_permissions:admin')->group(function () {

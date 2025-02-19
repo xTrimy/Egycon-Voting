@@ -106,4 +106,25 @@ class UserController extends Controller
     {
         //
     }
+
+    public function viewSettings()
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $telegramNotificationsEnabled = $user->getTelegramChatId() ? true : false;
+        $telegramCode = $user->getTelegramCode();
+        $telegramCodeQR = $user->getTelegramCodeQR();
+        return view('settings.all', compact('user', 'telegramNotificationsEnabled', 'telegramCode', 'telegramCodeQR'));
+    }
+
+    public function disableTelegramNotifications()
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $telegramChat = $user->getTelegramChatIdObject();
+        if ($telegramChat) {
+            $telegramChat->delete();
+        }
+        return redirect()->back()->with('success', 'Telegram notifications disabled');
+    }
 }

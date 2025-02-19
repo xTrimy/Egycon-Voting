@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\CosplayerController;
 use App\Http\Controllers\API\EventController;
+use App\Http\Controllers\TelegramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,3 +27,5 @@ Route::get('cosplayer/search_num/{event_id}/{number}', [CosplayerController::cla
 Route::get('cosplayers/event/{event_id}', [CosplayerController::class, 'get_all_by_event_id']);
 Route::apiResource('events', EventController::class);
 
+
+Route::any('/telegram', [TelegramController::class, 'index']);

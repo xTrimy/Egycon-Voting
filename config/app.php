@@ -17,6 +17,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable Telegram Notifications
+    |--------------------------------------------------------------------------
+    | This should be true to enable telegram messages testing
+    |
+    */
+    'telegram_message_testing' => (bool) env('TELEGRAM_MESSAGE_TESTING', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Telegram Notifications
+    |--------------------------------------------------------------------------
+    | This should be true if you want to enable telegram notifications
+    | Otherwise notification request will be dumbed to log file "telegram.log"
+    |
+    */
+    'enable_telegram_notifications' => (bool) env('ENABLE_TELEGRAM_NOTIFICATIONS', false),
+    
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
