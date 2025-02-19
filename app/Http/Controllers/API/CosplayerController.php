@@ -19,7 +19,7 @@ class CosplayerController extends Controller
         // get cosplayers in events that user has access to
         /** @var User $user */
         $user = auth()->user();
-        $cosplayers = $user->events()->with('cosplayers')->get()->pluck('cosplayers')->flatten();
+        $cosplayers = $user->events()->with('cosplayers')->orderBy('number')->get()->pluck('cosplayers')->flatten();
         return CosplayerResource::collection($cosplayers);
     }
 

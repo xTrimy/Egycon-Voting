@@ -70,19 +70,23 @@ class CosplayVoteReport extends Notification implements Telegramable, ShouldQueu
         foreach($top_cosplayers as $key => $cosplayer){
             $cosplayer["Place"] = $key + 1;
             // add st, nd, rd to place
-            switch(substr($cosplayer["Place"], -1)){
-                case 1:
-                    $cosplayer["Place"] .= "st";
-                    break;
-                case 2:
-                    $cosplayer["Place"] .= "nd";
-                    break;
-                case 3:
-                    $cosplayer["Place"] .= "rd";
-                    break;
-                default:
-                    $cosplayer["Place"] .= "th";
-                    break;
+            if($cosplayer["Place"] == 11 || $cosplayer["Place"] == 12 || $cosplayer["Place"] == 13){
+                $cosplayer["Place"] .= "th";
+            }else{
+                switch (substr($cosplayer["Place"], -1)) {
+                    case 1:
+                        $cosplayer["Place"] .= "st";
+                        break;
+                    case 2:
+                        $cosplayer["Place"] .= "nd";
+                        break;
+                    case 3:
+                        $cosplayer["Place"] .= "rd";
+                        break;
+                    default:
+                        $cosplayer["Place"] .= "th";
+                        break;
+                }
             }
             $top_cosplayers[$key] = $cosplayer;
         }
