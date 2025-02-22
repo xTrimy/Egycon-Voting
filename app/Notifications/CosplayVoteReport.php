@@ -58,14 +58,13 @@ class CosplayVoteReport extends Notification implements Telegramable, ShouldQueu
                 "Name" => $cosplayer->stage_name,
                 "Score" => $score
             ];
-            $i++;
-            if($i >= $this->top_cosplayers)
-                break;
         }
         // sort by score
         usort($top_cosplayers, function($a, $b){
             return $b["Score"] - $a["Score"];
         });
+
+        $top_cosplayers = array_slice($top_cosplayers, 0, $this->top_cosplayers);
 
         foreach($top_cosplayers as $key => $cosplayer){
             $cosplayer["Place"] = $key + 1;
