@@ -194,9 +194,27 @@ class CosplayerController extends Controller
         $file = $request->file('sheet');
         $event_id = $request->get('event_id');
 
+        $importStats = ['created' => 0, 'updated' => 0];
+
         // Import cosplayers from Excel/CSV if file provided
         if ($file) {
-            (new CosplayersImport($event_id))->import($file);
+            $startTime = microtime(true);
+            $importer = new CosplayersImport($event_id);
+            $importer->import($file);
+            $importTime = microtime(true) - $startTime;
+
+            // Get import statistics
+            $importStats = $importer->getStats();
+
+            // Log performance metrics
+            \Illuminate\Support\Facades\Log::info('Cosplayer import completed', [
+                'event_id' => $event_id,
+                'created' => $importStats['created'],
+                'updated' => $importStats['updated'],
+                'total_processed' => $importStats['created'] + $importStats['updated'],
+                'import_time_seconds' => round($importTime, 2),
+                'filename' => $file->getClientOriginalName()
+            ]);
         }
 
         $processedCounts = [
@@ -230,10 +248,31 @@ class CosplayerController extends Controller
                 ->withErrors(['references_zip' => $e->getMessage()]);
         }
 
-        $message = 'Cosplayers imported successfully';
-        if ($processedCounts['images'] > 0 || $processedCounts['references'] > 0) {
-            $message .= sprintf(' with %d images and %d references', $processedCounts['images'], $processedCounts['references']);
+        // Build detailed success message
+        $messageParts = [];
+
+        if ($file && ($importStats['created'] > 0 || $importStats['updated'] > 0)) {
+            $parts = [];
+            if ($importStats['created'] > 0) {
+                $parts[] = "{$importStats['created']} created";
+            }
+            if ($importStats['updated'] > 0) {
+                $parts[] = "{$importStats['updated']} updated";
+            }
+            $messageParts[] = "Cosplayers: " . implode(', ', $parts);
+        } elseif ($file) {
+            $messageParts[] = "Cosplayers imported successfully";
         }
+
+        if ($processedCounts['images'] > 0) {
+            $messageParts[] = "{$processedCounts['images']} images processed";
+        }
+
+        if ($processedCounts['references'] > 0) {
+            $messageParts[] = "{$processedCounts['references']} references processed";
+        }
+
+        $message = !empty($messageParts) ? implode(', ', $messageParts) : 'Import completed successfully';
 
         return redirect()->route('cosplayers.index')->with('success', $message);
     }
@@ -242,21 +281,15 @@ class CosplayerController extends Controller
     {
         $processedCount = 0;
 
+        // Pre-load all cosplayers for this event for efficient lookup
+        $cosplayersLookup = $this->buildCosplayersLookup($event_id);
+
         foreach ($files as $file){
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $cosplayer_number = $this->extractCosplayerNumber($filename);
 
             if ($cosplayer_number) {
-                // Normalize the cosplayer number for database lookup (remove leading zeros)
-                $normalized_number = ltrim($cosplayer_number, '0') ?: '0';
-
-                // Try to find cosplayer by normalized number or original format
-                $cosplayer = Cosplayer::where('event_id', $event_id)
-                    ->where(function($query) use ($cosplayer_number, $normalized_number) {
-                        $query->where('number', $cosplayer_number)
-                              ->orWhere('number', $normalized_number)
-                              ->orWhere('number', str_pad($normalized_number, 3, '0', STR_PAD_LEFT));
-                    })->first();
+                $cosplayer = $this->findCosplayerByNumber($cosplayer_number, $cosplayersLookup);
 
                 if($cosplayer){
                     $image = Image::read($file)->scaleDown(600, 600);
@@ -368,6 +401,9 @@ class CosplayerController extends Controller
         $processedCount = 0;
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+        // Pre-load all cosplayers for this event for efficient lookup
+        $cosplayersLookup = $this->buildCosplayersLookup($event_id);
+
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
 
         foreach ($iterator as $file) {
@@ -379,16 +415,7 @@ class CosplayerController extends Controller
                     $cosplayer_number = $this->extractCosplayerNumber($filename);
 
                     if ($cosplayer_number) {
-                        // Normalize the cosplayer number for database lookup
-                        $normalized_number = ltrim($cosplayer_number, '0') ?: '0';
-
-                        // Try to find cosplayer by normalized number or original format
-                        $cosplayer = Cosplayer::where('event_id', $event_id)
-                            ->where(function($query) use ($cosplayer_number, $normalized_number) {
-                                $query->where('number', $cosplayer_number)
-                                      ->orWhere('number', $normalized_number)
-                                      ->orWhere('number', str_pad($normalized_number, 3, '0', STR_PAD_LEFT));
-                            })->first();
+                        $cosplayer = $this->findCosplayerByNumber($cosplayer_number, $cosplayersLookup);
 
                         if ($cosplayer) {
                             try {
@@ -438,6 +465,55 @@ class CosplayerController extends Controller
             }
         }
         rmdir($dir);
+    }
+
+    /**
+     * Build an efficient lookup array for cosplayers by number
+     */
+    private function buildCosplayersLookup($event_id)
+    {
+        $cosplayers = Cosplayer::where('event_id', $event_id)->get(['id', 'number', 'name']);
+        $lookup = [];
+
+        foreach ($cosplayers as $cosplayer) {
+            // Create multiple lookup keys for flexible number matching
+            $numbers = [
+                $cosplayer->number,
+                ltrim($cosplayer->number, '0') ?: '0', // Remove leading zeros
+                str_pad(ltrim($cosplayer->number, '0') ?: '0', 3, '0', STR_PAD_LEFT) // Pad to 3 digits
+            ];
+
+            foreach (array_unique($numbers) as $number) {
+                $lookup[$number] = $cosplayer;
+            }
+        }
+
+        return $lookup;
+    }
+
+    /**
+     * Find cosplayer by number using the pre-built lookup array
+     */
+    private function findCosplayerByNumber($number, $cosplayersLookup)
+    {
+        // Try direct lookup first
+        if (isset($cosplayersLookup[$number])) {
+            return $cosplayersLookup[$number];
+        }
+
+        // Try normalized lookup (remove leading zeros)
+        $normalized = ltrim($number, '0') ?: '0';
+        if (isset($cosplayersLookup[$normalized])) {
+            return $cosplayersLookup[$normalized];
+        }
+
+        // Try padded lookup (pad to 3 digits)
+        $padded = str_pad($normalized, 3, '0', STR_PAD_LEFT);
+        if (isset($cosplayersLookup[$padded])) {
+            return $cosplayersLookup[$padded];
+        }
+
+        return null;
     }
 
     private function extractCosplayerNumber($filename)
