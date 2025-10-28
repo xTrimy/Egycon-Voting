@@ -19,7 +19,7 @@ Add Cosplayer
               @endisset
 
             </h2>
-            
+
             @if(Session::has('success'))
             <div
               class="flex items-center justify-between px-4 p-2 mb-8 text-sm font-semibold text-green-600 bg-green-100 rounded-lg focus:outline-none focus:shadow-outline-purple"
@@ -103,7 +103,7 @@ Add Cosplayer
                 Anime/Movie/Game <span class="text-red-500">*</span>
                 </span>
                 <input
-                value="{{ old('character')??$cosplayer->character??"" }}"
+                value="{{ old('anime')??$cosplayer->anime??"" }}"
                 type="text"
                 name="anime"
                     required
@@ -143,8 +143,8 @@ Add Cosplayer
 
                 </select>
               </label>
-             
-                 
+
+
               <button type="submit" class="table items-center mt-4 justify-between px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
               @isset($cosplayer)
               Update Cosplayer
