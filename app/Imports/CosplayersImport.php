@@ -77,12 +77,24 @@ class CosplayersImport implements ToCollection, WithHeadingRow
         $insertData = [];
 
         foreach ($batch as $row) {
-            $processedData = $this->processRow($row);
+            try {
+                // Convert Collection to array for processing
+                $rowArray = $row instanceof \Illuminate\Support\Collection ? $row->toArray() : (array) $row;
+                $processedData = $this->processRow($rowArray);
 
-            if ($processedData['existing_cosplayer']) {
-                $updateData[] = $processedData;
-            } else {
-                $insertData[] = $processedData['data'];
+                if ($processedData['existing_cosplayer']) {
+                    $updateData[] = $processedData;
+                } else {
+                    $insertData[] = $processedData['data'];
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Error processing row in CosplayersImport', [
+                    'error' => $e->getMessage(),
+                    'row_type' => gettype($row),
+                    'row_data' => is_array($row) || is_object($row) ? json_encode($row) : $row
+                ]);
+                // Skip this row and continue with the next one
+                continue;
             }
         }
 
