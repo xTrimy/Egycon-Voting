@@ -21,7 +21,7 @@ if($first_event_id == 6){
 @section('content')
         <main class="h-full pb-16 overflow-y-auto">
           <div class="container grid px-6 mx-auto">
-            <form 
+            <form
             @isset($event_id)
               action="{{ route('cosplayers.search_by_number_with_event', $event_id) }}"
             @else
@@ -40,7 +40,7 @@ if($first_event_id == 6){
                 {{ $cosplayers_s }}
               </h2>
             @include('includes.alerts')
-            
+
             <a href="{{ route('cosplayers.create') }}"><button class="bg-purple-600 text-white py-2 px-8 rounded-md">
                 Add new {{ $cosplayer_s }}
             </button></a>
@@ -79,7 +79,7 @@ if($first_event_id == 6){
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
                     @foreach ($cosplayers as $cosplayer)
-                        
+
                     <tr class="text-gray-700 dark:text-gray-400">
                       <td class="px-4 py-3">
                         {{ $cosplayer->number }}
@@ -102,7 +102,7 @@ if($first_event_id == 6){
                       </td>
                       <td>
                         <div class="flex items-center text-sm py-2">
-                            <a 
+                            <a
                             href="{{ route('cosplayers.edit',$cosplayer) }}"
                             >
                             <button
@@ -112,7 +112,7 @@ if($first_event_id == 6){
                                 <i class="las la-pen text-xl group-disabled:text-gray-500 text-green-500"></i>
                             </button>
                             </a>
-                            <a 
+                            <a
                             href="{{ route('cosplayers.show',$cosplayer) }}"
                             >
                             <button
@@ -132,17 +132,24 @@ if($first_event_id == 6){
                             >
                                 <i class="las la-trash text-xl group-disabled:text-gray-500 text-red-500"></i>
                             </button>
-                            @if(in_array($cosplayer->id,$judge_votes))
-                            <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
-                                Edit Vote
-                            </button></a>
+                            @if($cosplayer->event->isJudgeVotingEnabled())
+                                @if(in_array($cosplayer->id,$judge_votes))
+                                <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
+                                    Edit Vote
+                                </button></a>
+                                @else
+                                <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
+                                    Vote
+                                </button></a>
+                                @endif
                             @else
-                            <a href="{{ route('cosplayers.vote.create',$cosplayer) }}"><button class="bg-purple-600 text-white py-1 px-4 rounded-md">
-                                Vote
-                            </button></a>
+                                <button disabled class="bg-gray-400 text-gray-200 py-1 px-4 rounded-md cursor-not-allowed" title="{{ $cosplayer->event->getVotingStatusMessage() }}">
+                                    <i class="fas fa-lock mr-1"></i>
+                                    Voting Disabled
+                                </button>
                             @endif
                         </div>
-                        
+
                       </td>
                       <td>
                         {{ $cosplayer->calculateJudgeScore() }}

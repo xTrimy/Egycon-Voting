@@ -16,7 +16,7 @@ Cosplayer Details - {{ $cosplayer->name }}
               Cosplayer Details - {{ $cosplayer->name }}
             </h2>
             </div>
-           
+
             <div class="w-full overflow-hidden rounded-lg shadow-xs text-gray-700 dark:text-gray-200">
               <div class="w-full overflow-x-auto">
                 <table>
@@ -42,7 +42,7 @@ Cosplayer Details - {{ $cosplayer->name }}
                     </tr>
                     <tr>
                         <th class="text-left pr-4">Judges Score</th>
-                        <td>{{ $cosplayer->calculateJudgeScore() }}% 
+                        <td>{{ $cosplayer->calculateJudgeScore() }}%
                             <span class="text-xs text-gray-500">({{ $cosplayer->votes->count() }} {{ Str::plural("Vote", $cosplayer->votes->count()) }})</span>
                         </td>
                     </tr>
@@ -56,8 +56,16 @@ Cosplayer Details - {{ $cosplayer->name }}
                             <td> {{ $judge_vote->comment??"None" }} </td>
                         </tr>
                     @endif
-                    
-                   
+                    @if($cosplayer->getAllCustomData())
+                        @foreach($cosplayer->getAllCustomData() as $key => $value)
+                            <tr>
+                                <th class="text-left pr-4">{{ ucfirst(str_replace('_', ' ', $key)) }}</th>
+                                <td>{{ $value }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+
+
                 </table>
                 {{-- @php
                     $images = $cosplayer->getMedia('images');

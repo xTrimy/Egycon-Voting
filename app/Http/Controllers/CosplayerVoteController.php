@@ -26,11 +26,20 @@ class CosplayerVoteController extends Controller
      */
     public function create($cosplayer)
     {
-        $cosplayer = Cosplayer::with(['images','references'])->findOrFail($cosplayer);
+        $cosplayer = Cosplayer::with(['images','references', 'event'])->findOrFail($cosplayer);
         $vote = $cosplayer->vote(auth()->user());
-        $events = auth()->user()->events()->pluck('event_id')->toArray();
-        if (!in_array($cosplayer->event_id, $events))
+        $events = auth()->user()->events->pluck('id')->toArray();
+
+        if (!in_array($cosplayer->event_id, $events)) {
             return redirect()->route('cosplayers.index');
+        }
+
+        // Check if voting is enabled for this event
+        if (!$cosplayer->event->isJudgeVotingEnabled()) {
+            return redirect()->route('cosplayers.index')
+                ->with('error', $cosplayer->event->getVotingStatusMessage());
+        }
+
         return view('cosplayers.vote', compact('cosplayer', 'vote'));
     }
 
@@ -47,12 +56,18 @@ class CosplayerVoteController extends Controller
             'score' => 'required|integer|min:0|max:100',
             'comments' => 'nullable|string|max:255',
         ]);
-        // check if user has access to cosplayer 
-        $cosplayer = Cosplayer::findOrFail($request->id);
-        $events = auth()->user()->events()->pluck('event_id')->toArray();
+        // check if user has access to cosplayer
+        $cosplayer = Cosplayer::with('event')->findOrFail($request->id);
+        $events = auth()->user()->events->pluck('id')->toArray();
         if(!in_array($cosplayer->event_id, $events))
             return redirect()->route('cosplayers.index');
-      
+
+        // Check if voting is enabled for this event
+        if (!$cosplayer->event->isJudgeVotingEnabled()) {
+            return redirect()->route('cosplayers.index')
+                ->with('error', $cosplayer->event->getVotingStatusMessage());
+        }
+
         $vote = $cosplayer->vote(auth()->user());
         if($vote){
             $vote->update([

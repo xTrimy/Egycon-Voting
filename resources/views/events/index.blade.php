@@ -19,7 +19,7 @@ Events
                 Create new Event
             </button></a>
               </div>
-           
+
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
               <div class="w-full overflow-x-auto">
                 <table class="w-full whitespace-no-wrap" id="images">
@@ -28,6 +28,7 @@ Events
                       class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                     >
                       <th class="px-4 py-3">Event Name</th>
+                      <th class="px-4 py-3">Voting Status</th>
                       <th class="px-4 py-3">Actions</th>
                       <th class="px-4 py-3">Cosplayers</th>
                     </tr>
@@ -36,7 +37,7 @@ Events
                     class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
                   >
                     @foreach ($events as $event)
-                        
+
                     <tr class="text-gray-700 dark:text-gray-400">
                       <td class="px-4 py-3">
                         <div class="flex items-center text-sm">
@@ -45,16 +46,51 @@ Events
                           </div>
                         </div>
                       </td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center text-sm">
+                          <div class="flex items-center">
+                            @if($event->isJudgeVotingEnabled())
+                              <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                              <span class="text-green-600 dark:text-green-400 font-medium">Enabled</span>
+                            @else
+                              <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                              <span class="text-red-600 dark:text-red-400 font-medium">Disabled</span>
+                            @endif
+                          </div>
+                          @if($event->voting_starts_at || $event->voting_ends_at)
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              @if($event->voting_starts_at && $event->voting_ends_at)
+                                {{ $event->voting_starts_at->format('M j') }} - {{ $event->voting_ends_at->format('M j, Y') }}
+                              @elseif($event->voting_starts_at)
+                                Starts: {{ $event->voting_starts_at->format('M j, Y g:i A') }}
+                              @elseif($event->voting_ends_at)
+                                Ends: {{ $event->voting_ends_at->format('M j, Y g:i A') }}
+                              @endif
+                            </div>
+                          @endif
+                        </div>
+                      </td>
                       <td>
                         <div class="flex items-center text-sm py-2">
-                            <a 
+                            <a
                             href="{{ route('events.edit',$event) }}"
                             >
                             <button
                                 class="flex items-center group disabled:hover:bg-inherit disabled:cursor-not-allowed  hover:bg-gray-300 dark:hover:bg-gray-600 justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                                aria-label="Switch"
+                                aria-label="Edit Event"
                             >
                                 <i class="las la-pen text-xl group-disabled:text-gray-500 text-green-500"></i>
+                            </button>
+                            </a>
+                            <a
+                            href="{{ route('events.voting.settings', $event) }}"
+                            title="Voting Settings"
+                            >
+                            <button
+                                class="flex items-center group disabled:hover:bg-inherit disabled:cursor-not-allowed  hover:bg-gray-300 dark:hover:bg-gray-600 justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                                aria-label="Voting Settings"
+                            >
+                                <i class="fas fa-vote-yea text-xl group-disabled:text-gray-500 text-blue-500"></i>
                             </button>
                             </a>
                             <button onclick="display_popup(this)"
@@ -63,7 +99,7 @@ Events
                                 data-action="{{ route('events.destroy',$event) }}"
                                 data-method="DELETE"
                                 class="flex items-center group disabled:hover:bg-inherit disabled:cursor-not-allowed  hover:bg-gray-300 dark:hover:bg-gray-600 justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                                aria-label="Switch"
+                                aria-label="Delete Event"
                             >
                                 <i class="las la-trash text-xl group-disabled:text-gray-500 text-red-500"></i>
                             </button>

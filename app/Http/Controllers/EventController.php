@@ -39,7 +39,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
         // store event
-        $event = (new APIEventController)->store($request);        
+        $event = (new APIEventController)->store($request);
         return redirect()->route('events.index');
     }
 
@@ -93,5 +93,43 @@ class EventController extends Controller
         // delete event
         $event = (new APIEventController)->destroy($id);
         return redirect()->route('events.index');
+    }
+
+    /**
+     * Show the voting settings form for the specified event.
+     *
+     * @param  Event  $event
+     * @return \Illuminate\Http\Response
+     */
+    public function votingSettings(Event $event)
+    {
+        return view('events.voting-settings', compact('event'));
+    }
+
+    /**
+     * Update the voting settings for the specified event.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Event  $event
+     * @return \Illuminate\Http\Response
+     */
+    public function updateVotingSettings(Request $request, Event $event)
+    {
+        $request->validate([
+            'judge_voting_enabled' => 'required|boolean',
+            'voting_starts_at' => 'nullable|date',
+            'voting_ends_at' => 'nullable|date|after:voting_starts_at',
+        ]);
+
+        $event->update([
+            'judge_voting_enabled' => $request->boolean('judge_voting_enabled'),
+            'voting_starts_at' => $request->voting_starts_at ? \Carbon\Carbon::parse($request->voting_starts_at) : null,
+            'voting_ends_at' => $request->voting_ends_at ? \Carbon\Carbon::parse($request->voting_ends_at) : null,
+        ]);
+
+        $message = $event->judge_voting_enabled ? 'Judge voting has been enabled.' : 'Judge voting has been disabled.';
+
+        return redirect()->route('events.voting.settings', $event)
+            ->with('success', $message);
     }
 }

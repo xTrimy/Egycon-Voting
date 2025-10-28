@@ -17,6 +17,11 @@ class Cosplayer extends Model
         'number',
         'stage_name',
         'event_id',
+        'custom_data',
+    ];
+
+    protected $casts = [
+        'custom_data' => 'array',
     ];
 
     public function event()
@@ -64,8 +69,54 @@ class Cosplayer extends Model
         $score = round($score, 2);
         return $score;
     }
-    
-    
+
+    /**
+     * Get a custom data field value
+     */
+    public function getCustomData($key, $default = null)
+    {
+        return $this->custom_data[$key] ?? $default;
+    }
+
+    /**
+     * Set a custom data field value
+     */
+    public function setCustomData($key, $value)
+    {
+        $customData = $this->custom_data ?? [];
+        $customData[$key] = $value;
+        $this->custom_data = $customData;
+        return $this;
+    }
+
+    /**
+     * Get all custom data fields
+     */
+    public function getAllCustomData()
+    {
+        return $this->custom_data ?? [];
+    }
+
+    /**
+     * Check if a custom data field exists
+     */
+    public function hasCustomData($key)
+    {
+        return isset($this->custom_data[$key]);
+    }
+
+    /**
+     * Remove a custom data field
+     */
+    public function removeCustomData($key)
+    {
+        $customData = $this->custom_data ?? [];
+        unset($customData[$key]);
+        $this->custom_data = $customData;
+        return $this;
+    }
+
+
 
 
 }
